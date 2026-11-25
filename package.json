@@ -1,0 +1,9 @@
+{
+  "name": "note-mini-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "清单备忘小程序（云端版）",
+  "dependencies": {
+    "@tencent-ai/workbuddy-cloud-sdk": "dev"
+  }
+}

@@ -1,0 +1,39 @@
+<view class="page">
+    <view class="hero">
+        <text class="eyebrow">SHARED NOTE</text>
+        <text class="title">共享备忘</text>
+        <text class="subtitle">输入对方发来的分享码即可查看</text>
+    </view>
+
+    <view class="lookup">
+        <input class="code-input" value="{{inputCode}}" placeholder="输入分享码" bindinput="onCodeInput" />
+        <button class="lookup-button" bindtap="onLookup">查看</button>
+    </view>
+
+    <view class="state-card" wx:if="{{loading}}">
+        <text class="state-text">正在获取…</text>
+    </view>
+
+    <view class="state-card" wx:elif="{{error}}">
+        <text class="state-icon">!</text>
+        <text class="state-text">{{error}}</text>
+    </view>
+
+    <view class="note-card" wx:elif="{{note}}">
+        <view class="note-head">
+            <text class="category">{{note.category}}</text>
+            <text class="priority">优先级 {{note.priority}}</text>
+        </view>
+        <text class="note-title">{{note.title}}</text>
+        <text class="note-content" wx:if="{{note.content}}">{{note.content}}</text>
+        <view class="due-row" wx:if="{{note.dueText}}">
+            <text class="due-label">提醒时间</text>
+            <text class="due-value">{{note.dueText}}</text>
+        </view>
+        <text class="readonly">此为只读快照，原备忘更新后需重新分享</text>
+    </view>
+
+    <view class="state-card" wx:elif="{{checked}}">
+        <text class="state-text">没有找到这条共享备忘</text>
+    </view>
+</view>

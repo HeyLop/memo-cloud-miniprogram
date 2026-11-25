@@ -1,0 +1,14 @@
+# 依赖（npm install 可重建）
+node_modules/
+miniprogram_npm/
+
+# WorkBuddy 工具内部文件
+.workbuddy/
+.wbapp_*.genie
+.wbapp_*.privacy.json
+
+# 系统/编辑器
+.DS_Store
+*.log
+.idea/
+.vscode/

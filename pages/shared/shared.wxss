@@ -1,0 +1,150 @@
+.page {
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 48rpx 32rpx;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32rpx;
+}
+
+.eyebrow {
+    color: #1769e0;
+    font-size: 22rpx;
+    font-weight: 600;
+    letter-spacing: 3rpx;
+}
+
+.title {
+    margin-top: 16rpx;
+    font-size: 52rpx;
+    font-weight: 700;
+}
+
+.subtitle {
+    margin-top: 12rpx;
+    color: #646a73;
+    font-size: 26rpx;
+}
+
+.lookup {
+    display: flex;
+    align-items: center;
+    padding: 20rpx;
+    background: #ffffff;
+    border: 2rpx solid #e5e8eb;
+    border-radius: 20rpx;
+}
+
+.code-input {
+    flex: 1;
+    height: 72rpx;
+    padding: 0 20rpx;
+    background: #f5f7fa;
+    border-radius: 12rpx;
+    font-size: 28rpx;
+}
+
+.lookup-button {
+    margin-left: 16rpx;
+    width: 140rpx;
+    height: 72rpx;
+    line-height: 72rpx;
+    padding: 0;
+    background: #1769e0;
+    color: #ffffff;
+    font-size: 28rpx;
+    border-radius: 12rpx;
+}
+
+.state-card,
+.note-card {
+    box-sizing: border-box;
+    margin-top: 24rpx;
+    padding: 36rpx;
+    background: #ffffff;
+    border: 2rpx solid #e5e8eb;
+    border-radius: 20rpx;
+}
+
+.state-card {
+    display: flex;
+    min-height: 200rpx;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.state-icon {
+    color: #d54941;
+    font-size: 56rpx;
+}
+
+.state-text {
+    margin-top: 16rpx;
+    color: #646a73;
+    font-size: 28rpx;
+}
+
+.note-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.category {
+    padding: 8rpx 20rpx;
+    background: #eaf2ff;
+    color: #1769e0;
+    font-size: 22rpx;
+    border-radius: 30rpx;
+}
+
+.priority {
+    color: #8a9099;
+    font-size: 22rpx;
+}
+
+.note-title {
+    display: block;
+    margin-top: 24rpx;
+    font-size: 36rpx;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.note-content {
+    display: block;
+    margin-top: 16rpx;
+    color: #1f2329;
+    font-size: 28rpx;
+    line-height: 1.7;
+}
+
+.due-row {
+    display: flex;
+    align-items: center;
+    margin-top: 28rpx;
+    padding-top: 24rpx;
+    border-top: 2rpx solid #f0f1f2;
+}
+
+.due-label {
+    color: #8a9099;
+    font-size: 24rpx;
+}
+
+.due-value {
+    margin-left: 20rpx;
+    color: #d54941;
+    font-size: 26rpx;
+}
+
+.readonly {
+    display: block;
+    margin-top: 28rpx;
+    color: #8a9099;
+    font-size: 22rpx;
+}
