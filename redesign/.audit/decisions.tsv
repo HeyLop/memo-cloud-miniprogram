@@ -5,3 +5,4 @@
 2026-11-25T16:45:00+08:00	recheck	发现v1试用版AppID是touristappid，测试号不支持云开发/订阅消息；6项环境核心3项(正式AppID/云环境/订阅模板)全缺	用户以为试用版发布成功=配置齐全，核对project.config.json与腾讯云官方文档后证伪	project.config.json appid=touristappid; WebSearch腾讯云"测试号不支持云开发"	blocker-found
 2026-11-25T16:48:00+08:00	recheck	D10取代D5：保留WorkBuddy云，不换微信云开发	换云要全量重写+三项环境全缺；保留云省掉重写，已发布版与数据不作废	用户决策"重新考虑：不换了"; 对比图三方案	accepted; supersedes D5
 2026-11-25T16:50:00+08:00	recheck	D11取代D8的推送部分：提醒降为二期，本版只做App内提醒	订阅消息仍需正式AppID+模板(与用哪个云无关)，测试号做不到；先把前端四层跑起来最快见产品	用户决策"推送降为二期"	accepted; supersedes D8-push; 二期条件=注册正式号+订阅模板
+2026-11-25T16:55:00+08:00	code-review	D12取代D7的实现方式：智能解析本版用本地正则，云端LLM降二期	评审发现实现(正则)与设计(D7云函数NLP)不符；云LLM凭证未就绪，正则覆盖主要口语、复杂表达落needsManual	评审报告Major-2; parse-todo.js 本地正则 	accepted; supersedes D7-impl; 用户可推翻
