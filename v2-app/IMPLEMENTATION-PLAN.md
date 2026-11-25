@@ -25,7 +25,7 @@
 ### 任务 1：建 v2 工程骨架
 - 文件路径：`v2-app/app.json`、`v2-app/app.js`、`v2-app/app.wxss`、`v2-app/project.config.json`、`v2-app/sitemap.json`
 - 要做的：
-  - `app.json` 声明 3 个页面：`pages/index/index`、`pages/edit/edit`、`pages/shared/shared`；`window.navigationBarTitleText` = "待办 v2"；保留 `lazyCodeLoading: requiredComponents`。
+  - `app.json` 声明 2 个页面：`pages/index/index`、`pages/edit/edit`（本版范围无分享功能，YAGNI 砍掉 v1 的 shared 页；二期若做分享再加）；`window.navigationBarTitleText` = "待办 v2"；保留 `lazyCodeLoading: requiredComponents`。
   - `app.js` 复制 v1 的 `authReady` 逻辑（`handleWorkBuddyMiniProgramCallback`），全局数据加 `appName: '待办 v2'`。
   - `app.wxss` 定义双色主题 CSS 变量（任务 5 细化，此处先建空壳）。
   - `project.config.json` 复制 v1，appid 保持 `touristappid`（本版测试号够用，D11 推送不需）。
@@ -84,7 +84,7 @@
 - 文件路径：`v2-app/utils/parse-todo.js`（新建，前端草稿解析）；数据库侧解析走 WorkBuddy 云 LLM（见下）
 - 要做的：
   - 输入一句话，抽取 `{title, dueAt, zone, needsManual}`。
-  - **方案**：优先调 WorkBuddy 云 LLM 模块解析（凭证在云端，不下发前端）；前端 `parse-todo.js` 封装调用 + 本地兜底正则（识别"今天/明天/周X + 上午/下午/晚上 + 时刻"）。
+  - **方案（2026-11-25 评审后修订）**：**本版用本地正则解析**（识别"今天/明天/后天/周X + 上午/下午/晚上 + 时刻"），覆盖主要口语表达；云端 LLM 解析列为二期增强——正则处理不了的复杂表达落到 `needsManual` 让用户补选。此修订因 WorkBuddy 云 LLM 的接入与凭证配置未在本版就绪，为避免悄悄降级，正式记录于此。
   - 解析失败/低置信 → `needsManual: true`，前端弹时间选择器补选，原文保留为 title。
   - 解析结果先显示"草稿卡"，用户确认后才入库。
 - 验证：输入"明天下午3点交报告"断言 dueAt=明天15:00、zone=work、title 去掉时间词；输入无法解析文本断言 needsManual=true 且不丢字。
