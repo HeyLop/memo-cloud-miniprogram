@@ -1,8 +1,7 @@
-<view class="page">
+<view class="page {{zone === 'life' ? 'zone-life' : ''}}">
     <view class="hero">
-        <text class="eyebrow">MEMO · CLOUD</text>
-        <text class="title">清单备忘</text>
-        <text class="subtitle">工作提醒 · 云端同步 · 可分享</text>
+        <text class="eyebrow">TODO · V2</text>
+        <text class="title">待办</text>
     </view>
 
     <view class="state-card" wx:if="{{authState === 'checking'}}">
@@ -11,9 +10,8 @@
     </view>
 
     <view class="state-card" wx:elif="{{authState === 'signed-out'}}">
-        <text class="empty-icon">○</text>
-        <text class="state-title">登录后查看你的备忘</text>
-        <text class="state-description">微信一键登录，数据保存在云端、跨设备同步。</text>
+        <text class="state-title">登录后查看你的待办</text>
+        <text class="state-description">微信一键登录，数据云端保存、跨设备同步。</text>
         <button class="primary-button" bindtap="onWechatLogin" loading="{{wechatLoggingIn}}" disabled="{{wechatLoggingIn || loggingIn}}">微信一键登录</button>
         <text class="backup-login" bindtap="onLogin" wx:if="{{!wechatLoggingIn && !loggingIn}}">改用 WorkBuddy 账号登录</text>
         <text class="error-text" wx:if="{{loginError}}">{{loginError}}</text>
@@ -22,62 +20,54 @@
     <block wx:else>
         <view class="top-bar">
             <text class="user-name">{{user.name || '已登录用户'}}</text>
-            <view class="top-actions">
-                <text class="link" bindtap="onOpenShared">共享备忘</text>
-                <text class="link" bindtap="onLogout">退出</text>
+            <text class="link" bindtap="onLogout">退出</text>
+        </view>
+
+        <view class="zone-tabs">
+            <view class="zone-tab {{zone === 'work' ? 'zone-tab-active' : ''}}" data-zone="work" bindtap="onZoneSwitch">工作</view>
+            <view class="zone-tab {{zone === 'life' ? 'zone-tab-active' : ''}}" data-zone="life" bindtap="onZoneSwitch">生活</view>
+        </view>
+
+        <view class="draft-card" wx:if="{{draft}}">
+            <text class="draft-label">识别结果 · 请确认</text>
+            <text class="draft-text">{{draft.title}}</text>
+            <text class="draft-label" wx:if="{{draft.dueText}}">时间：{{draft.dueText}}</text>
+            <text class="draft-label" wx:if="{{draft.needsManual}}">未识别到时间，可在下一步补选</text>
+            <view class="draft-actions">
+                <text class="draft-button" bindtap="onDraftConfirm">确认保存</text>
+                <text class="draft-button draft-button-ghost" bindtap="onDraftCancel">修改文字</text>
             </view>
         </view>
 
-        <view class="today-card" wx:if="{{todayNotes.length > 0}}">
-            <view class="today-head">
-                <text class="today-title">今日提醒</text>
-                <text class="today-count">{{todayNotes.length}} 条待处理</text>
+        <view class="focus-card" wx:if="{{todayNotes.length > 0}}">
+            <view class="focus-head">
+                <text class="focus-title">今日聚焦</text>
+                <text class="focus-count">{{todayNotes.length}} 件待办</text>
             </view>
-            <view class="today-item" wx:for="{{todayNotes}}" wx:key="id">
-                <view class="today-item-main">
-                    <text class="today-item-title">{{item.title}}</text>
-                    <text class="today-item-time">{{item.dueText}} · {{item.priority}}优先级</text>
+            <view class="focus-item" wx:for="{{todayNotes}}" wx:key="id">
+                <view class="focus-item-main">
+                    <text class="focus-item-title {{item.isOverdue ? 'overdue' : ''}}">{{item.title}}</text>
+                    <text class="focus-item-time">{{item.dueText}}</text>
                 </view>
-                <text class="go" data-id="{{item.id}}" bindtap="onEdit">查看</text>
             </view>
         </view>
 
-        <view class="filter-row">
-            <text
-                class="filter-chip {{filter === item ? 'filter-active' : ''}}"
-                wx:for="{{filters}}"
-                wx:key="*this"
-                data-value="{{item}}"
-                bindtap="onFilterTap"
-            >{{item}}</text>
-        </view>
-
-        <text class="error-text" wx:if="{{loadError}}">{{loadError}}</text>
-
-        <view class="list-card" wx:if="{{allNotes.length > 0}}">
-            <view class="note-item" wx:for="{{allNotes}}" wx:key="id" wx:if="{{filter === '全部' || item.category === filter}}">
-                <view class="check {{item.done ? 'check-done' : ''}}" data-id="{{item.id}}" bindtap="onToggleDone">{{item.done ? '✓' : ''}}</view>
-                <view class="note-main" data-id="{{item.id}}" bindtap="onEdit">
-                    <view class="note-head">
-                        <text class="note-title {{item.done ? 'title-done' : ''}}">{{item.title}}</text>
-                        <text class="priority-badge {{item.priorityClass}}">{{item.priority}}</text>
-                    </view>
+        <view class="list-card">
+            <view class="note-item" wx:for="{{visibleNotes}}" wx:key="id" bindtap="onEdit" data-id="{{item.id}}">
+                <view class="check {{item.done ? 'check-done' : ''}}" catchtap="onToggleDone" data-id="{{item.id}}">{{item.done ? '✓' : ''}}</view>
+                <view class="note-main">
+                    <text class="note-title {{item.done ? 'title-done' : ''}}">{{item.title}}</text>
+                    <text class="badge {{item.badgeClass}}">{{item.priority}}</text>
                     <text class="note-content" wx:if="{{item.content}}">{{item.content}}</text>
-                    <view class="note-meta">
-                        <text class="meta-item">{{item.category}}</text>
-                        <text class="meta-item" wx:if="{{item.dueText}}">⏰ {{item.dueText}}</text>
-                    </view>
+                    <text class="note-meta" wx:if="{{item.dueText}}">{{item.dueText}}</text>
                 </view>
-                <text class="share-link" data-id="{{item.id}}" bindtap="onShare">分享</text>
             </view>
+            <view class="empty-card" wx:if="{{visibleNotes.length === 0 && !draft}}">本分区还没有待办，下方输入一句试试</view>
         </view>
 
-        <view class="empty-card" wx:else>
-            <text class="empty-icon">○</text>
-            <text class="empty-title">还没有备忘</text>
-            <text class="empty-desc">点下方「新建备忘」创建第一条。</text>
+        <view class="input-bar">
+            <input class="input-field" value="{{inputText}}" bindinput="onInput" bindconfirm="onAdd" placeholder="例如：明天下午3点交报告" confirm-type="done" />
+            <button class="add-button" bindtap="onAdd">添加</button>
         </view>
-
-        <button class="add-fab" bindtap="onAdd">+ 新建备忘</button>
     </block>
 </view>

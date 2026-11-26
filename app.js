@@ -2,7 +2,7 @@ const { cloud } = require('./utils/cloud')
 
 App({
     globalData: {
-        appName: '清单备忘',
+        appName: '待办 v2',
     },
 
     onShow(options) {

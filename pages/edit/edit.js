@@ -1,24 +1,43 @@
-const { notes } = require('../../utils/notes-store')
-const { SUBSCRIBE_TEMPLATE_IDS } = require('../../utils/config')
+const { notes } = require('../../utils/todo-store')
 
-const CATEGORIES = ['工作', '个人', '学习', '其他']
-const PRIORITIES = ['高', '普通', '低']
+const PRIORITIES = [
+    { value: 'high', label: '高' },
+    { value: 'normal', label: '普通' },
+    { value: 'low', label: '低' },
+]
 
 Page({
     data: {
         id: null,
         title: '',
         content: '',
-        category: '工作',
-        priority: '普通',
+        zone: 'work',
+        priority: 'normal',
         dueDate: '',
         dueTime: '',
-        categories: CATEGORIES,
         priorities: PRIORITIES,
+        parseMeta: null,
         saving: false,
     },
 
     async onLoad(options) {
+        // 草稿预填（来自首页 NLP 解析结果）
+        if (options.draft) {
+            try {
+                const draft = JSON.parse(decodeURIComponent(options.draft))
+                const patch = { title: draft.title || '', zone: draft.zone || 'work', parseMeta: draft.parseMeta || null }
+                if (draft.dueAt) {
+                    const d = new Date(draft.dueAt)
+                    const pad = (n) => (n < 10 ? '0' + n : '' + n)
+                    patch.dueDate = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
+                    patch.dueTime = pad(d.getHours()) + ':' + pad(d.getMinutes())
+                }
+                this.setData(patch)
+                wx.setNavigationBarTitle({ title: '确认草稿' })
+                return
+            } catch (e) { /* 草稿解析失败，走普通新建 */ }
+        }
+        // 编辑已有
         if (options.id) {
             const { data, error } = await notes.list()
             const note = error ? null : (data || []).find((n) => String(n.id) === options.id)
@@ -35,12 +54,13 @@ Page({
                     id: note.id,
                     title: note.title,
                     content: note.content,
-                    category: note.category,
+                    zone: note.zone,
                     priority: note.priority,
                     dueDate,
                     dueTime,
+                    parseMeta: note.parseMeta,
                 })
-                wx.setNavigationBarTitle({ title: '编辑备忘' })
+                wx.setNavigationBarTitle({ title: '编辑待办' })
             }
         }
     },
@@ -49,21 +69,11 @@ Page({
     onContentInput(e) { this.setData({ content: e.detail.value }) },
     onDateChange(e) { this.setData({ dueDate: e.detail.value }) },
     onTimeChange(e) { this.setData({ dueTime: e.detail.value }) },
-
-    onCategoryTap(e) { this.setData({ category: e.currentTarget.dataset.value }) },
+    onZoneTap(e) { this.setData({ zone: e.currentTarget.dataset.zone }) },
     onPriorityTap(e) { this.setData({ priority: e.currentTarget.dataset.value }) },
 
-    requestSubscribe() {
-        if (!this.data.dueDate || SUBSCRIBE_TEMPLATE_IDS.length === 0) return
-        wx.requestSubscribeMessage({
-            tmplIds: SUBSCRIBE_TEMPLATE_IDS,
-            success() {},
-            fail() {},
-        })
-    },
-
     async onSave() {
-        const { title, content, category, priority, dueDate, dueTime, id } = this.data
+        const { title, content, zone, priority, dueDate, dueTime, id, parseMeta } = this.data
         if (!title.trim()) {
             wx.showToast({ title: '请输入标题', icon: 'none' })
             return
@@ -73,17 +83,16 @@ Page({
             dueAt = dueTime ? dueDate + 'T' + dueTime + ':00+08:00' : dueDate + 'T09:00:00+08:00'
         }
         this.setData({ saving: true })
-        const payload = { title, content, category, priority, dueAt }
-        const result = id
-            ? await notes.update(id, payload)
-            : await notes.create(payload)
+        const payload = { title, content, zone, priority, dueAt }
+        if (parseMeta && !id) payload.parseMeta = parseMeta
+        const result = id ? await notes.update(id, payload) : await notes.create(payload)
         this.setData({ saving: false })
         if (result.error || (!id && !result.data)) {
             wx.showToast({ title: (result.error && result.error.message) || '保存失败', icon: 'none' })
             return
         }
-        this.requestSubscribe()
-        wx.showToast({ title: '已保存到云端', icon: 'success' })
+        // D11：本版不请求订阅授权（推送二期）
+        wx.showToast({ title: '已保存', icon: 'success' })
         setTimeout(() => wx.navigateBack(), 600)
     },
 
@@ -91,7 +100,7 @@ Page({
         if (!this.data.id) return
         const confirm = await new Promise((resolve) => {
             wx.showModal({
-                title: '删除这条备忘？',
+                title: '删除这条待办？',
                 content: '删除后无法恢复',
                 success: (res) => resolve(res.confirm),
             })

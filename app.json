@@ -1,11 +1,10 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/edit/edit",
-    "pages/shared/shared"
+    "pages/edit/edit"
   ],
   "window": {
-    "navigationBarTitleText": "清单备忘",
+    "navigationBarTitleText": "待办 v2",
     "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#f5f7fa",
