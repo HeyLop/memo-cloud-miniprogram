@@ -1,0 +1,85 @@
+.page {
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 40rpx 32rpx;
+    background: var(--page-bg);
+}
+
+.field {
+    margin-bottom: 32rpx;
+}
+
+.label {
+    display: block;
+    margin-bottom: 12rpx;
+    color: var(--text-muted);
+    font-size: 26rpx;
+}
+
+.input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 20rpx 24rpx;
+    background: var(--card-bg);
+    border: 2rpx solid var(--border);
+    border-radius: 12rpx;
+    font-size: 30rpx;
+}
+
+.title-input {
+    font-weight: 600;
+}
+
+.textarea {
+    min-height: 180rpx;
+}
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.chip {
+    padding: 14rpx 36rpx;
+    margin: 0 16rpx 16rpx 0;
+    background: var(--card-bg);
+    border: 2rpx solid var(--border);
+    border-radius: 40rpx;
+    color: var(--text-muted);
+    font-size: 26rpx;
+}
+
+.chip-active {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #ffffff;
+}
+
+.date-row {
+    display: flex;
+}
+
+.picker {
+    padding: 20rpx 24rpx;
+    margin-right: 16rpx;
+    background: var(--card-bg);
+    border: 2rpx solid var(--border);
+    border-radius: 12rpx;
+    font-size: 28rpx;
+}
+
+.save-button {
+    width: 100%;
+    margin-top: 48rpx;
+    background: var(--brand);
+    color: #ffffff;
+    font-size: 32rpx;
+}
+
+.delete-link {
+    display: block;
+    margin-top: 32rpx;
+    text-align: center;
+    color: var(--danger);
+    font-size: 26rpx;
+}
